@@ -1,0 +1,3 @@
+[submodule "vendor/doctrine1.2"]
+	path = vendor/doctrine1.2
+	url = git@github.com:acoulton/doctrine1.git
