@@ -37,12 +37,24 @@ class Controller_Doctrine extends Controller {
      */
     public function action_buildDatabase() {
         $Config = Kohana::config('doctrine');
-        Doctrine_Core::dropDatabases();
-        Doctrine_Core::createDatabases();
-        $this->request->response = Doctrine_Core::createTablesFromModels($Config->modelPath);
-        foreach ($Config->defaultDataFixtures as $fixtureFile) {
-            Doctrine_Core::loadData($fixtureFile);
-        }
+        $this->request->response = View::factory('kodoctrine/build_database')
+                                    ->set('db_connection',Doctrine_Manager::connection())
+                                    ->bind('executed',$executed)
+                                    ->bind('migration',$migration)
+                                    ->bind('build_response',$build_response);
+        if ($_POST) {
+            $executed = true;
+            $this->elevate_db_user($_POST);
+            Doctrine_Core::dropDatabases();
+            Doctrine_Core::createDatabases();
+            $migration = new Doctrine_Migration($Config->schemaPath.'migrations');
+            $migration->setCurrentVersion($migration->getLatestVersion());
+            Doctrine_Core::createTablesFromModels($Config->modelPath);
+            foreach ($Config->defaultDataFixtures as $fixtureFile) {
+                Doctrine_Core::loadData($fixtureFile);
+            }
+            $build_response = Doctrine_Manager::connection()->import->listTables();
+        }        
     }
     
     /**
@@ -68,12 +80,15 @@ class Controller_Doctrine extends Controller {
      */
     public function action_buildMigrations() {
         $Config = Kohana::config('doctrine');
+        $this->request->response = View::factory('kodoctrine/build_migration')
+                                    ->bind('migration',$migration)
+                                    ->bind('changes',$changes)
+                                    ->bind('preview',$preview);
 
         //we need to be in MODEL_LOADING_AGGRESSIVE (PEAR doesn't work)
         $manager = Doctrine_Manager::getInstance();
         $modelLoading = $manager->getAttribute(Doctrine_Core::ATTR_MODEL_LOADING);
-        $manager->setAttribute(Doctrine_Core::ATTR_MODEL_LOADING, Doctrine_Core::MODEL_LOADING_AGGRESSIVE);
-
+        $manager->setAttribute(Doctrine_Core::ATTR_MODEL_LOADING, Doctrine_Core::MODEL_LOADING_AGGRESSIVE);        
         //generate the migration classes
         foreach ($Config->schemaFiles as $schemaFile) {
             $oldVersion = $Config->schemaPath.'history\\'.$schemaFile;
@@ -84,22 +99,32 @@ class Controller_Doctrine extends Controller {
                 file_put_contents($oldVersion, "");
             }
 
-            $changes[$schemaFile] = Doctrine_Core::generateMigrationsFromDiff(
+            if ($_POST) {
+                $preview = false;
+
+                $changes[$schemaFile] = Doctrine_Core::generateMigrationsFromDiff(
                         $Config->schemaPath.'migrations',
                         $oldVersion, $newVersion);
-            
-            //and copy the old file over the new one
-            copy($newVersion, $oldVersion);
-            
+
+                //and copy the old file over the new one
+                copy($newVersion, $oldVersion);
+            } else {
+                $preview = true;
+                $diff = new Doctrine_Migration_Diff($oldVersion, $newVersion,
+                                $Config->schemaPath.'migrations');
+                $changes[$schemaFile] = $diff->generateChanges();
+            }
+
         }
         //return to the old MODEL_LOADING value
         $manager->setAttribute(Doctrine_Core::ATTR_MODEL_LOADING, $modelLoading);
 
-        //now build the model files
-        $this->action_buildModels();
+        if ($_POST) {
+            //now build the model files
+            $this->action_buildModels();
+        }
 
-        //now return the data
-        $this->request->response = "<PRE>" . Kohana::dump($changes) . "</PRE>";
+        $migration = new Doctrine_Migration($Config->schemaPath.'migrations');
     }
 
     /**
@@ -108,13 +133,30 @@ class Controller_Doctrine extends Controller {
      * These are all left as actions for future implementation.
      */
     public function action_migrate() {
-        //@todo: Authentication
-        //@todo: Confirmation
         //@todo: Backup before beginning!
         $Config = Kohana::config('doctrine');
-
         $migration = new Doctrine_Migration($Config->schemaPath.'migrations');
-        $migration->migrate();
-        $this->request->response = "OK";
+        $this->request->response = View::factory('kodoctrine/migrate')
+                                    ->set('migration',$migration)
+                                    ->set('db_connection',Doctrine_Manager::connection())
+                                    ->bind('migrate_done', $migrate_done);
+
+        if ($_POST) {
+            $this->elevate_db_user($_POST);
+            $migration->migrate();
+            $migrate_done = true;
+        }
+    }
+
+    protected function elevate_db_user($values) {
+        $dsn = Arr::get($values, 'db_dsn');
+        $connection = Doctrine_Manager::connection();
+        if ($dsn != $connection->getOption('dsn')) {
+            throw new Exception("Current database connection is not the one for which elevation was requested");
+        }
+        $connection->close();
+        $connection->setOption('username', Arr::get($values, 'db_username'));
+        $connection->setOption('password', Arr::get($values, 'db_password'));
+        $connection->connect();
     }
 }
