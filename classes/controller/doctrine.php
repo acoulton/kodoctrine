@@ -18,13 +18,14 @@ class Controller_Doctrine extends Controller {
      */
     public function action_buildModels() {
         $Config = Kohana::config('doctrine');
-
         foreach ($Config->schemaFiles as $file) {
-            Doctrine_Core::generateModelsFromYaml(
-                    $Config->schemaPath,
+            $files[] = Kohana::find_file('schema', $file,'yml');
+        }
+        Doctrine_Core::generateModelsFromYaml(
+                    $files,
                     $Config->modelPath,
                     $Config->builderOptions);
-        }
+
     }
 
     /**
@@ -54,11 +55,11 @@ class Controller_Doctrine extends Controller {
                 Doctrine_Core::loadData($fixtureFile);
             }
             $build_response = Doctrine_Manager::connection()->import->listTables();
-        }        
+        }
     }
-    
+
     /**
-     * This function will rebuild models, and then the database - without any 
+     * This function will rebuild models, and then the database - without any
      * confirmation!
      */
     public function action_buildAll() {
@@ -88,7 +89,7 @@ class Controller_Doctrine extends Controller {
         //we need to be in MODEL_LOADING_AGGRESSIVE (PEAR doesn't work)
         $manager = Doctrine_Manager::getInstance();
         $modelLoading = $manager->getAttribute(Doctrine_Core::ATTR_MODEL_LOADING);
-        $manager->setAttribute(Doctrine_Core::ATTR_MODEL_LOADING, Doctrine_Core::MODEL_LOADING_AGGRESSIVE);        
+        $manager->setAttribute(Doctrine_Core::ATTR_MODEL_LOADING, Doctrine_Core::MODEL_LOADING_AGGRESSIVE);
         //generate the migration classes
         foreach ($Config->schemaFiles as $schemaFile) {
             $oldVersion = $Config->schemaPath.'history\\'.$schemaFile;
