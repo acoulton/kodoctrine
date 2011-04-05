@@ -45,6 +45,7 @@ class Controller_Doctrine extends Controller {
                                     ->bind('build_response',$build_response);
         if ($_POST) {
             $executed = true;
+            set_time_limit(90);
             $this->elevate_db_user($_POST);
             Doctrine_Core::dropDatabases();
             Doctrine_Core::createDatabases();
@@ -92,8 +93,8 @@ class Controller_Doctrine extends Controller {
         $manager->setAttribute(Doctrine_Core::ATTR_MODEL_LOADING, Doctrine_Core::MODEL_LOADING_AGGRESSIVE);
         //generate the migration classes
         foreach ($Config->schemaFiles as $schemaFile) {
-            $oldVersion = $Config->schemaPath.'history\\'.$schemaFile;
-            $newVersion = $Config->schemaPath.$schemaFile;
+            $oldVersion = $Config->schemaPath.'history\\'.$schemaFile.".yml";
+            $newVersion = $Config->schemaPath.$schemaFile.".yml";
 
             //create a blank history file if none exists
             if ( ! file_exists($oldVersion)) {
