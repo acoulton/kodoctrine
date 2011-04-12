@@ -32,8 +32,8 @@ return array(
    * security. This should be changed from site to site.
    */
   'adminRoute' => 'dc1234',
-  'schemaPath' => APPPATH . 'schema\\',
-  'schemaFiles' => array(),
+  'migration_classes' => APPPATH . 'schema\migrations',
+  'migration_schema' => APPPATH . 'schema\current_schema.php',
   'builderOptions' => array(
       'baseClassPrefix'=>'Base_',
       'baseClassesDirectory'=>'',

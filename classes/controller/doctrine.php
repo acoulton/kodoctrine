@@ -17,6 +17,7 @@ class Controller_Doctrine extends Controller {
      * application config file.
      */
     public function action_buildModels() {
+        throw new Exception("Uhoh, this doesn't work with the CFS!");
         $Config = Kohana::config('doctrine');
         foreach ($Config->schemaFiles as $file) {
             $files[] = Kohana::find_file('schema', $file,'yml');
@@ -37,6 +38,7 @@ class Controller_Doctrine extends Controller {
      * action will be tightened up in further releases!
      */
     public function action_buildDatabase() {
+        throw new Exception("Uhoh, this doesn't work with the CFS!");
         $Config = Kohana::config('doctrine');
         $this->request->response = View::factory('kodoctrine/build_database')
                                     ->set('db_connection',Doctrine_Manager::connection())
@@ -87,46 +89,19 @@ class Controller_Doctrine extends Controller {
                                     ->bind('changes',$changes)
                                     ->bind('preview',$preview);
 
-        //we need to be in MODEL_LOADING_AGGRESSIVE (PEAR doesn't work)
-        $manager = Doctrine_Manager::getInstance();
-        $modelLoading = $manager->getAttribute(Doctrine_Core::ATTR_MODEL_LOADING);
-        $manager->setAttribute(Doctrine_Core::ATTR_MODEL_LOADING, Doctrine_Core::MODEL_LOADING_AGGRESSIVE);
-        //generate the migration classes
-        foreach ($Config->schemaFiles as $schemaFile) {
-            $oldVersion = $Config->schemaPath.'history\\'.$schemaFile.".yml";
-            $newVersion = $Config->schemaPath.$schemaFile.".yml";
 
-            //create a blank history file if none exists
-            if ( ! file_exists($oldVersion)) {
-                file_put_contents($oldVersion, "");
-            }
+        $diff = new KoDoctrine_Migration_Diff();
+        $changes = $diff->generateChanges();
+        $preview = true;
 
-            if ($_POST) {
-                $preview = false;
-
-                $changes[$schemaFile] = Doctrine_Core::generateMigrationsFromDiff(
-                        $Config->schemaPath.'migrations',
-                        $oldVersion, $newVersion);
-
-                //and copy the old file over the new one
-                copy($newVersion, $oldVersion);
-            } else {
-                $preview = true;
-                $diff = new Doctrine_Migration_Diff($oldVersion, $newVersion,
-                                $Config->schemaPath.'migrations');
-                $changes[$schemaFile] = $diff->generateChanges();
-            }
-
-        }
-        //return to the old MODEL_LOADING value
-        $manager->setAttribute(Doctrine_Core::ATTR_MODEL_LOADING, $modelLoading);
-
-        if ($_POST) {
-            //now build the model files
-            $this->action_buildModels();
+        if ($_POST)
+        {
+            $preview = false;
+            $diff->generateMigrationClasses();
         }
 
-        $migration = new Doctrine_Migration($Config->schemaPath.'migrations');
+        $migration = $diff->migration();
+        return;
     }
 
     /**

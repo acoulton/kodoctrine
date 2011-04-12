@@ -35,7 +35,13 @@
                         $key = $data['tableName'];
                         break;
                     default:
-                        $key = key($data);
+                        if (is_array($data)) {
+                            $key = key($data);
+                        }
+                        else
+                        {
+                            $key = $data;
+                        }
                 }?>
                 <td><?=$key?></td>
                 </tr><tr>
