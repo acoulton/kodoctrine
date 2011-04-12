@@ -23,9 +23,6 @@ foreach ($Config->attributes as $attrib => $value) {
 //we need to register a dummy validator so that the schema builder doesn't complain about the validation element
 $manager->registerValidators('validation');
 
-//Load the models
-Doctrine::loadModels($Config->modelPath);
-
 //Block normal access to the doctrine controller
 Route::set('doctrineBlock', 'doctrine')
   ->defaults(array(

@@ -32,7 +32,6 @@ return array(
    * security. This should be changed from site to site.
    */
   'adminRoute' => 'dc1234',
-  'modelPath' => APPPATH . 'classes\model',
   'schemaPath' => APPPATH . 'schema\\',
   'schemaFiles' => array(),
   'builderOptions' => array(
@@ -48,5 +47,5 @@ return array(
       'phpDocName' => 'Author',
       'phpDocEmail' => 'AuthorMail'),
    'defaultDataFixtures' => array(),
-   
+
   );
