@@ -158,7 +158,7 @@
                         <td rowspan ="<?=count($columns);?>"><?=$table;?></td>
                     <?php $first = false; endif;?>
                         <td><?=$name?></td>
-                        <td colspan="3"><?=implode(', ',$details['fields'])?></td>
+                        <td colspan="3"><?=Kohana::debug($details['fields'])?></td>
                 </tr>
           <?php endforeach;
             endforeach;?>
