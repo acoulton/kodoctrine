@@ -78,10 +78,10 @@ class KoDoctrine_Migration_Diff extends Doctrine_Migration_Diff
         {
             require_once($file);
         }
-        $models = Doctrine_Core::getLoadedModels();
+        $models = Doctrine_Core::initializeModels(Doctrine_Core::getLoadedModels());
 
         $info = array();
-        foreach ($models as $model_name => $model) {
+        foreach ($models as $key => $model) {
             $table = Doctrine_Core::getTable($model);
             if ($table->getTableName() === $this->_migration->getTableName()) {
                 continue;
@@ -92,16 +92,17 @@ class KoDoctrine_Migration_Diff extends Doctrine_Migration_Diff
              * properly.
              */
             $model_schema = $table->getExportableFormat();
-            $model_schema['models'][] = $model_name;
             $table_name = $model_schema['tableName'];
             if ( ! isset($info[$table_name]))
             {
                 $info[$table_name] = $model_schema;
+                $info[$table_name]['models'][] = $model;
                 continue;
             }
 
             // The table already exists, so merge in data from this model
             $table_schema =& $info[$table_name];
+            $table_schema['models'][] = $model;
 
             foreach ($model_schema['columns'] as $name=>$options)
             {
