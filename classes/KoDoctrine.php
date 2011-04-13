@@ -2,7 +2,4 @@
 
 class KoDoctrine {
 
-    public static function DumpModel($Model) {
-        
-    }
 }
