@@ -81,11 +81,83 @@ class KoDoctrine_Migration_Diff extends Doctrine_Migration_Diff
         $models = Doctrine_Core::getLoadedModels();
 
         $info = array();
-        foreach ($models as $key => $model) {
+        foreach ($models as $model_name => $model) {
             $table = Doctrine_Core::getTable($model);
-            if ($table->getTableName() !== $this->_migration->getTableName()) {
-                $info[$model] = $table->getExportableFormat();
+            if ($table->getTableName() === $this->_migration->getTableName()) {
+                continue;
             }
+
+            /*
+             * Departure from the Doctrine1.2 code, to support model inheritance
+             * properly.
+             */
+            $model_schema = $table->getExportableFormat();
+            $model_schema['models'][] = $model_name;
+            $table_name = $model_schema['tableName'];
+            if ( ! isset($info[$table_name]))
+            {
+                $info[$table_name] = $model_schema;
+                continue;
+            }
+
+            // The table already exists, so merge in data from this model
+            $table_schema =& $info[$table_name];
+
+            foreach ($model_schema['columns'] as $name=>$options)
+            {
+                // The column doesn't yet exist in the table schema
+                if ( ! isset($table_schema['columns'][$name]))
+                {
+                    $table_schema['columns'][$name] = $options;
+                    continue;
+                }
+
+                // The column is equal in both
+                if (Arr::flatten($table_schema['columns'][$name])
+                        == Arr::flatten($options))
+                {
+                    continue;
+                }
+
+                // The column is different in the two models
+                $table_column =& $table_schema['columns'][$name];
+                if ($table_column['type'] != $options['type'])
+                {
+                    throw new Kohana_Exception('Type definition of column :column in table :table
+                        differs between :model (:model_type) and :defined_models (:defined_type)',
+                            array(':column'=>$name,
+                                  ':table'=>$table_name,
+                                  ':model'=>$model_name,
+                                  ':model_type'=>$options['type'],
+                                  ':defined_models'=>implode(", ",$table_schema['models']),
+                                  ':defined_type' => $table_column['type']));
+                }
+
+                // If length is different, take the biggest
+                if ($table_column['length'] < $options['length'])
+                {
+                    $table_column['length'] = $options['length'];
+                }
+
+                // Merge ENUM values
+                if (isset($table_column['values']) OR isset($options['values']))
+                {
+                    $table_column['values'] = Arr::merge(
+                            Arr::get($table_column,'values',array()),
+                            Arr::get($options,'values',array()));
+                }
+
+                // Default
+                // Autoincrement?
+                // Primary?
+            }
+
+            // Keys
+            // Indexes
+            // type
+            // charset
+            // collate
+
         }
 
         $info = $this->_cleanModelInformation($info);
