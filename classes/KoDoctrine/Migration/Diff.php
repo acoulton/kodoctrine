@@ -26,7 +26,7 @@ class KoDoctrine_Migration_Diff extends Doctrine_Migration_Diff
         // Load the fromInfo from the application path
         if (file_exists($this->_from))
         {
-            $schema = unserialize(file_get_contents($this->_from));
+            $schema = Doctrine_Parser::load($this->_from, 'yml');
         }
 
         return $schema;
@@ -116,7 +116,21 @@ class KoDoctrine_Migration_Diff extends Doctrine_Migration_Diff
     public function generateMigrationClasses()
     {
         $changeset = parent::generateMigrationClasses();
-        file_put_contents($this->_from, serialize($this->_to_schema()));
+
+        $schema = $this->_to_schema();
+        /*
+         * Clean up the ReflectionClass instances
+         */
+        foreach ($schema as $key=>$model)
+        {
+            if (isset($model['options']['declaringClass'])
+                && $model['options']['declaringClass'] instanceof ReflectionClass)
+            {
+                $schema[$key]['options']['declaringClass'] = $model['options']['declaringClass']->getName();
+            }
+        }
+
+        Doctrine_Parser::dump($schema, 'yml', $this->_from);
     }
 
     public function migration()

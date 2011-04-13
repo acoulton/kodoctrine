@@ -33,7 +33,7 @@ return array(
    */
   'adminRoute' => 'dc1234',
   'migration_classes' => APPPATH . 'schema\migrations',
-  'migration_schema' => APPPATH . 'schema\current_schema.php',
+  'migration_schema' => APPPATH . 'schema\current_schema.yml',
   'builderOptions' => array(
       'baseClassPrefix'=>'Base_',
       'baseClassesDirectory'=>'',
