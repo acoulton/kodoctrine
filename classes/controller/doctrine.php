@@ -112,7 +112,7 @@ class Controller_Doctrine extends Controller {
     public function action_migrate() {
         //@todo: Backup before beginning!
         $Config = Kohana::config('doctrine');
-        $migration = new Doctrine_Migration($Config->schemaPath.'migrations');
+        $migration = new Doctrine_Migration($Config->migration_classes);
         $this->request->response = View::factory('kodoctrine/migrate')
                                     ->set('migration',$migration)
                                     ->set('db_connection',Doctrine_Manager::connection())
