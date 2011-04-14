@@ -16,8 +16,8 @@
                         <td rowspan ="<?=count($columns);?>"><?=$table;?></td>
                     <?php $first = false; endif;?>
                         <td><?=$name?></td>
-                        <td><?=$details['type']?></td>
-                        <td><?=$details['length']?></td>
+                        <td><?=Arr::get($details,'type','MISSING')?></td>
+                        <td><?=Arr::get($details,'length','MISSING')?></td>
                         <td></td>
                 </tr>
           <?php endforeach;
@@ -33,8 +33,8 @@
                         <td rowspan ="<?=count($columns);?>"><?=$table;?></td>
                     <?php $first = false; endif;?>
                         <td><?=$name?></td>
-                        <td><?=$details['type']?></td>
-                        <td><?=$details['length']?></td>
+                        <td><?=Arr::get($details,'type','MISSING')?></td>
+                        <td><?=Arr::get($details,'length')?></td>
                         <td></td>
                 </tr>
           <?php endforeach;
@@ -50,8 +50,8 @@
                         <td rowspan ="<?=count($columns);?>"><?=$table;?></td>
                     <?php $first = false; endif;?>
                         <td><?=$name?></td>
-                        <td><?=$details['type']?></td>
-                        <td><?=$details['length']?></td>
+                        <td><?=Arr::get($details,'type','MISSING')?></td>
+                        <td><?=Arr::get($details,'length')?></td>
                         <td></td>
                 </tr>
           <?php endforeach;
@@ -67,8 +67,8 @@
                         <td rowspan ="<?=count($columns);?>"><?=$table;?></td>
                     <?php $first = false; endif;?>
                         <td><?=$name?></td>
-                        <td><?=$details['type']?></td>
-                        <td><?=$details['length']?></td>
+                        <td><?=Arr::get($details,'type','MISSING')?></td>
+                        <td><?=Arr::get($details,'length')?></td>
                         <td></td>
                 </tr>
           <?php endforeach;
@@ -86,8 +86,8 @@
                         <td rowspan ="<?=count($columns);?>"><?=$table;?></td>
                     <?php $first = false; endif;?>
                         <td><?=$name?></td>
-                        <td><?=$details['type']?></td>
-                        <td><?=$details['length']?></td>
+                        <td><?=Arr::get($details,'type','MISSING')?></td>
+                        <td><?=Arr::get($details,'length')?></td>
                         <td></td>
                 </tr>
           <?php endforeach;
@@ -106,8 +106,8 @@
                         <td rowspan ="<?=count($columns)+1;?>"><?=$table;?></td>
                     <?php $first = false; endif;?>
                         <td><?=$name?></td>
-                        <td><?=$details['type']?></td>
-                        <td><?=$details['length']?></td>
+                        <td><?=Arr::get($details,'type','MISSING')?></td>
+                        <td><?=Arr::get($details,'length')?></td>
                         <td></td>
                 </tr>
           <?php endforeach;?>
@@ -124,8 +124,8 @@
                         <td rowspan ="<?=count($columns);?>"><?=$table;?></td>
                     <?php $first = false; endif;?>
                         <td><?=$name?></td>
-                        <td><?=$details['type']?></td>
-                        <td><?=$details['length']?></td>
+                        <td><?=Arr::get($details,'type','MISSING')?></td>
+                        <td><?=Arr::get($details,'length')?></td>
                         <td></td>
                 </tr>
           <?php endforeach;
