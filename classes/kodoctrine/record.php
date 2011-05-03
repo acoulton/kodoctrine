@@ -32,7 +32,7 @@
  * @version     $Revision: 7496 $
  */
 abstract class KoDoctrine_Record extends Doctrine_Record {
-    
+
     /**
      * An array of the data as at last validation used to support skipping
      * re-validation if data has not changed
@@ -80,7 +80,7 @@ abstract class KoDoctrine_Record extends Doctrine_Record {
         //$validateData = $this->exists() ? $this->getModified() : $this->getData();
         $validateData = $this->getData();
         if (count(array_diff_assoc($validateData, $this->_validatedData))) {
-            
+
             if ($hooks) {
                 $this->invokeSaveHooks('pre', 'save');
                 $this->invokeSaveHooks('pre', $this->exists() ? 'update' : 'insert');
@@ -106,13 +106,13 @@ abstract class KoDoctrine_Record extends Doctrine_Record {
 
                 //add the messages to the error stack
                 //@todo: Check whether this record class has any validation rules configured. If not it automatically passes this stage
-                if (!$validator->check()) {                    
+                if (!$validator->check()) {
                     //@todo: Consider possibility of supporting multiple messages per field
                     //@todo: Consider whether to store error stackk as native and allow application-level control of message display
-                    $errors = $validator->errors($this->_validationMessageFile);                    
+                    $errors = $validator->errors($this->_validationMessageFile);
                     //throw new Exception(Kohana::dump($errors) . Kohana::dump($validateData));
                     $stack = $this->getErrorStack();
-                    foreach ($errors as $field=>$error) {                        
+                    foreach ($errors as $field=>$error) {
                         $stack->add($field, $error);
                     }
                 }
@@ -171,16 +171,56 @@ abstract class KoDoctrine_Record extends Doctrine_Record {
                 $rules['max_length'] = array($meta['length']);
             }
             //@todo: automatically create validators for type, length, enum etc
-            
+
             //override auto-rules with any specifics
             if (isset($meta['validation'])) {
                 //implement the rules
                 $rules = Arr::merge($rules, $meta['validation']['rules']);
-            }            
+            }
             //set the validation rules
-            $this->_validator->rules($fieldName, $rules);            
-            //@todo: support callbacks, filters, etc            
+            $this->_validator->rules($fieldName, $rules);
+            //@todo: support callbacks, filters, etc
         }
         return $this->_validator;
+    }
+
+    /**
+     * Internal factory method that supports creating a new record, loading existing,
+     * and valdiating whether the user is trying to create a new record.
+     * @throws InvalidArgumentException If the record does not exist, or null is passed and $allow_create is false
+     * @param string $class
+     * @param int $id
+     * @param boolean $allow_create
+     * @param Doctrine_Query $query
+     * @return KoDoctrine_Record
+     */
+    protected static function _internal_factory($class, $id = null, $allow_create = true, $query = null)
+    {
+        if ($id === null)
+        {
+            if ($allow_create)
+            {
+                return new $class;
+            }
+            else
+            {
+                throw new InvalidArgumentException("No ID passed to factory for $class");
+            }
+        }
+
+        if ($query == null)
+        {
+            $query = Doctrine_Query::create();
+        }
+
+        $result = $query->from($class . " m")
+                        ->where('id = ?', (int) $id)
+                        ->fetchOne();
+
+        if ( ! $result)
+        {
+            throw new InvalidArgumentException("$id was not a valid $class ID");
+        }
+        return $result;
     }
 }
