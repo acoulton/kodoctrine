@@ -26,7 +26,10 @@ return array(
       Doctrine::ATTR_EXPORT => Doctrine::EXPORT_ALL,
       Doctrine::ATTR_TBLNAME_FORMAT => '%s',
       Doctrine::ATTR_MODEL_CLASS_PREFIX => 'Model_',
-      Doctrine::ATTR_AUTOLOAD_TABLE_CLASSES => true),
+      Doctrine::ATTR_AUTOLOAD_TABLE_CLASSES => true,
+      Doctrine::ATTR_DEFAULT_TABLE_CHARSET => 'utf8',
+      Doctrine::ATTR_DEFAULT_TABLE_COLLATE => 'utf8_unicode_ci'
+      ),
   /**
    * adminroute is a site-specific route to the doctrine controller for (very basic)
    * security. This should be changed from site to site.
