@@ -33,6 +33,20 @@
  */
 abstract class KoDoctrine_Record extends Doctrine_Record {
 
+    const COL_TYPE_INTEGER = 'integer';
+    const COL_TYPE_DECIMAL = 'decimal';
+    const COL_TYPE_STRING = 'string';
+    const COL_TYPE_CLOB = 'clob';
+    const COL_TYPE_FLOAT = 'float';
+    const COL_TYPE_ARRAY = 'array';
+    const COL_TYPE_OBJECT = 'object';
+    const COL_TYPE_BLOB = 'blob';
+    const COL_TYPE_GZIP = 'gzip';
+    const COL_TYPE_BOOLEAN = 'boolean';
+    const COL_TYPE_DATE = 'date';
+    const COL_TYPE_TIME = 'time';
+    const COL_TYPE_TIMESTAMP = 'timestamp';
+
     /**
      * An array of the data as at last validation used to support skipping
      * re-validation if data has not changed
