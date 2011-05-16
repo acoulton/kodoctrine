@@ -11,7 +11,12 @@ class KoDoctrine_Migration_Diff extends Doctrine_Migration_Diff
         // So there's nothing to do here!
 
         $this->_from = Kohana::config('doctrine.migration_schema');
-        $this->_migration = new Doctrine_Migration(Kohana::config('doctrine.migration_classes'));
+        $path = Kohana::config('doctrine.migration_classes');
+        if ( ! is_dir($path))
+        {
+            mkdir($path, 0777, true);
+        }
+        $this->_migration = new Doctrine_Migration($path);
     }
 
     protected function _from_schema()
