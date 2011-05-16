@@ -237,4 +237,37 @@ abstract class KoDoctrine_Record extends Doctrine_Record {
         }
         return $result;
     }
+
+    /**
+     * Allow modules to add relations without having to insert cascading classes
+     */
+    public function relations_from_config()
+    {
+        $config = Kohana::config('model');
+
+        // Build an array of inheritance classes
+        $inheritances = array();
+        $class = new ReflectionClass($this);
+        while ($class)
+        {
+            $name = $class->getName();
+            $inheritances[] = $name;
+            $class = ($name == 'KoDoctrine_Record') ? null : $class->getParentClass();
+        }
+        array_reverse($inheritances);
+
+        // Load the relations from the configuration
+        $relations = array();
+        foreach ($inheritances as $class_name)
+        {
+            $relations = Arr::merge($relations, Arr::path($config, $class_name . ".relations",array()));
+        }
+
+        // Apply the relations
+        foreach ($relations as $relation => $config)
+        {
+            $method = 'has' . $config['type'];
+            $this->$method($config['model'].' as '.$relation, $config['options']);
+        }
+    }
 }
