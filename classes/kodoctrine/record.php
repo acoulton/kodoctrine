@@ -46,6 +46,7 @@ abstract class KoDoctrine_Record extends Doctrine_Record {
     const COL_TYPE_DATE = 'date';
     const COL_TYPE_TIME = 'time';
     const COL_TYPE_TIMESTAMP = 'timestamp';
+    const COL_TYPE_ENUM = 'enum';
 
     /**
      * An array of the data as at last validation used to support skipping
