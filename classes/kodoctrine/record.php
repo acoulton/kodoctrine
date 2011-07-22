@@ -244,7 +244,7 @@ abstract class KoDoctrine_Record extends Doctrine_Record {
      */
     public function relations_from_config()
     {
-        $config = Kohana::config('model');
+        $config = Kohana::$config->load('model');
 
         // Build an array of inheritance classes
         $inheritances = array();

@@ -9,9 +9,9 @@ class KoDoctrine_Migration_Diff extends Doctrine_Migration_Diff
         // We always go from a schema state file
         // To all the current models
         // So there's nothing to do here!
-
-        $this->_from = Kohana::config('doctrine.migration_schema');
-        $path = Kohana::config('doctrine.migration_classes');
+        $config = Kohana::$config->load('doctrine');
+        $this->_from = $config->migration_schema;
+        $path = $config->migration_classes;
         if ( ! is_dir($path))
         {
             mkdir($path, 0777, true);

@@ -18,7 +18,7 @@ class Controller_Doctrine extends Controller {
      */
     public function action_buildModels() {
         throw new Exception("Uhoh, this doesn't work with the CFS!");
-        $Config = Kohana::config('doctrine');
+        $Config = Kohana::$config->load('doctrine');
         foreach ($Config->schemaFiles as $file) {
             $files[] = Kohana::find_file('schema', $file,'yml');
         }
@@ -39,7 +39,7 @@ class Controller_Doctrine extends Controller {
      */
     public function action_buildDatabase() {
         throw new Exception("Uhoh, this doesn't work with the CFS!");
-        $Config = Kohana::config('doctrine');
+        $Config = Kohana::$config->load('doctrine');
         $this->request->response = View::factory('kodoctrine/build_database')
                                     ->set('db_connection',Doctrine_Manager::connection())
                                     ->bind('executed',$executed)
@@ -83,7 +83,7 @@ class Controller_Doctrine extends Controller {
      * 4. Commit the new migrations files, the new schema file and the history folder
      */
     public function action_buildMigrations() {
-        $Config = Kohana::config('doctrine');
+        $Config = Kohana::$config->load('doctrine');
         $this->request->response = View::factory('kodoctrine/build_migration')
                                     ->bind('migration',$migration)
                                     ->bind('changes',$changes)
@@ -111,7 +111,7 @@ class Controller_Doctrine extends Controller {
      */
     public function action_migrate() {
         //@todo: Backup before beginning!
-        $Config = Kohana::config('doctrine');
+        $Config = Kohana::$config->load('doctrine');
         $migration = new Doctrine_Migration($Config->migration_classes);
         $this->request->response = View::factory('kodoctrine/migrate')
                                     ->set('migration',$migration)
