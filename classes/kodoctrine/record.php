@@ -114,13 +114,9 @@ abstract class KoDoctrine_Record extends Doctrine_Record {
                 //$validateData = $this->exists() ? $this->getModified() : $this->getData();
                 $validateData = $this->getData();
 
-                //@todo: Consider how to temporarily remove validation rules to allow validation of just modified data
-
-                $validator = $this->getValidator();
-                $validator->exchangeArray($validateData);
+                $validator = $this->get_validation($validateData);
 
                 //add the messages to the error stack
-                //@todo: Check whether this record class has any validation rules configured. If not it automatically passes this stage
                 if (!$validator->check()) {
                     //@todo: Consider possibility of supporting multiple messages per field
                     //@todo: Consider whether to store error stackk as native and allow application-level control of message display
@@ -165,38 +161,29 @@ abstract class KoDoctrine_Record extends Doctrine_Record {
         return $valid;
     }
 
-    public function getValidator() {
-        if ( ! $this->_validator) {
-            $this->_validator = new Validate(array());
-        }
+    public function get_validation($data) {
+
+        $validation = Validation::factory($data);
+        $validation->bind(':model', $this);
+
         //@todo: implement a validation object repository for model types and create new via clone?
+
         $table = $this->getTable();
         foreach ($table->getFieldNames() as $fieldName)
         {
             $meta = $table->getDefinitionOf($fieldName);
             if ( ! $meta) {
-                print_r('*'.$fieldName);
                 continue;
             }
 
-            $rules = array();
-
             //auto create a rule for length
             if (($meta['type']=='string') && isset($meta['length'])) {
-                $rules['max_length'] = array($meta['length']);
+                $validation->rule($fieldName, 'max_length', array(':value'=>$meta['length']));
             }
-            //@todo: automatically create validators for type, length, enum etc
+            //@todo: automatically create validators for type, enum, notnull etc
 
-            //override auto-rules with any specifics
-            if (isset($meta['validation'])) {
-                //implement the rules
-                $rules = Arr::merge($rules, $meta['validation']['rules']);
             }
-            //set the validation rules
-            $this->_validator->rules($fieldName, $rules);
-            //@todo: support callbacks, filters, etc
-        }
-        return $this->_validator;
+        return $validation;
     }
 
     /**
