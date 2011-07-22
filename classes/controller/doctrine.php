@@ -40,7 +40,7 @@ class Controller_Doctrine extends Controller {
     public function action_buildDatabase() {
         throw new Exception("Uhoh, this doesn't work with the CFS!");
         $Config = Kohana::$config->load('doctrine');
-        $this->request->response = View::factory('kodoctrine/build_database')
+        $view = View::factory('kodoctrine/build_database')
                                     ->set('db_connection',Doctrine_Manager::connection())
                                     ->bind('executed',$executed)
                                     ->bind('migration',$migration)
@@ -59,6 +59,8 @@ class Controller_Doctrine extends Controller {
             }
             $build_response = Doctrine_Manager::connection()->import->listTables();
         }
+
+        $this->response->body($view);
     }
 
     /**
@@ -84,7 +86,7 @@ class Controller_Doctrine extends Controller {
      */
     public function action_buildMigrations() {
         $Config = Kohana::$config->load('doctrine');
-        $this->request->response = View::factory('kodoctrine/build_migration')
+        $view = View::factory('kodoctrine/build_migration')
                                     ->bind('migration',$migration)
                                     ->bind('changes',$changes)
                                     ->bind('preview',$preview);
@@ -101,7 +103,8 @@ class Controller_Doctrine extends Controller {
         }
 
         $migration = $diff->migration();
-        return;
+
+        $this->response->body($view);
     }
 
     /**
@@ -113,7 +116,7 @@ class Controller_Doctrine extends Controller {
         //@todo: Backup before beginning!
         $Config = Kohana::$config->load('doctrine');
         $migration = new Doctrine_Migration($Config->migration_classes);
-        $this->request->response = View::factory('kodoctrine/migrate')
+        $view = View::factory('kodoctrine/migrate')
                                     ->set('migration',$migration)
                                     ->set('db_connection',Doctrine_Manager::connection())
                                     ->bind('migrate_done', $migrate_done);
@@ -123,6 +126,7 @@ class Controller_Doctrine extends Controller {
             $migration->migrate();
             $migrate_done = true;
         }
+        $this->response->body($view);
     }
 
     protected function elevate_db_user($values) {
