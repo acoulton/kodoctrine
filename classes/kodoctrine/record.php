@@ -178,7 +178,7 @@ abstract class KoDoctrine_Record extends Doctrine_Record {
 
             //auto create a rule for length
             if (($meta['type']=='string') && isset($meta['length'])) {
-                $validation->rule($fieldName, 'max_length', array(':value'=>$meta['length']));
+                $validation->rule($fieldName, 'max_length', array(':value',$meta['length']));
             }
             //@todo: automatically create validators for type, enum, notnull etc
 
