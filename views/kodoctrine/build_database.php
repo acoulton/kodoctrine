@@ -3,7 +3,7 @@
 <?php if ($executed):?>
     <p>Successfully built database. Initialised migrations to version
         <em><?=$migration->getCurrentVersion()?></em>.</p>
-    <p><?=Kohana::debug($build_response);?></p>
+    <p><?=Debug::dump($build_response);?></p>
 <?php else:?>
     <p style="background-color:#cc0000;border:1px solid red; font-size:2em;">
         This action will delete and rebuild your entire database. All data will

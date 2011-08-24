@@ -111,7 +111,7 @@
                         <td></td>
                 </tr>
           <?php endforeach;?>
-                <tr><td colspan="4"><?=Kohana::debug($data['options']);?></td></tr>
+                <tr><td colspan="4"><?=Debug::dump($data['options']);?></td></tr>
           <?php endforeach;?>
         <tr><th colspan="5">Created Columns</th></tr>
         <?php
@@ -158,7 +158,7 @@
                         <td rowspan ="<?=count($columns);?>"><?=$table;?></td>
                     <?php $first = false; endif;?>
                         <td><?=$name?></td>
-                        <td colspan="3"><?=Kohana::debug($details['fields'])?></td>
+                        <td colspan="3"><?=Debug::dump($details['fields'])?></td>
                 </tr>
           <?php endforeach;
             endforeach;?>
