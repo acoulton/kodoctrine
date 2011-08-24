@@ -45,10 +45,10 @@ class Controller_Doctrine extends Controller {
                                     ->bind('executed',$executed)
                                     ->bind('migration',$migration)
                                     ->bind('build_response',$build_response);
-        if ($_POST) {
+        if ($creds = $this->interactive_credentials()) {
             $executed = true;
             set_time_limit(90);
-            $this->elevate_db_user($_POST);
+            $this->elevate_db_user($creds);
             Doctrine_Core::dropDatabases();
             Doctrine_Core::createDatabases();
             $migration = new Doctrine_Migration($Config->schemaPath.'migrations');
@@ -121,20 +121,43 @@ class Controller_Doctrine extends Controller {
                                     ->set('db_connection',Doctrine_Manager::connection())
                                     ->bind('migrate_done', $migrate_done);
 
-        if ($_POST) {
-            $this->elevate_db_user($_POST);
+        if ($creds = $this->interactive_credentials()) {
+            $this->elevate_db_user($creds);
             $migration->migrate();
             $migrate_done = true;
         }
         $this->response->body($view);
     }
 
-    protected function elevate_db_user($values) {
-        $dsn = Arr::get($values, 'db_dsn');
-        $connection = Doctrine_Manager::connection();
-        if ($dsn != $connection->getOption('dsn')) {
-            throw new Exception("Current database connection is not the one for which elevation was requested");
+    /**
+     * Checks if this is an interactive request and returns credentials
+     * @return array
+     */
+    protected function interactive_credentials()
+    {
+        if ($this->request->method() == 'POST')
+        {
+            $dsn = Arr::get($this->request->post(), 'db_dsn');
+            $connection = Doctrine_Manager::connection();
+            if ($dsn != $connection->getOption('dsn'))
+            {
+                throw new Exception("Current database connection is not the one for which elevation was requested");
+            }
+
+            return Arr::extract($this->request->post(), array('db_username', 'db_password'));
         }
+
+        if (Kohana::$is_cli)
+        {
+            $args = CLI::options('user','pwd');
+            return array(
+                'db_username'=>Arr::get($args, 'user'),
+                'db_password'=>Arr::get($args, 'pwd'));
+        }
+    }
+
+    protected function elevate_db_user($values) {
+        $connection = Doctrine_Manager::connection();
         $connection->close();
         $connection->setOption('username', Arr::get($values, 'db_username'));
         $connection->setOption('password', Arr::get($values, 'db_password'));
