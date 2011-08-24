@@ -35,8 +35,8 @@ return array(
    * security. This should be changed from site to site.
    */
   'adminRoute' => 'dc1234',
-  'migration_classes' => APPPATH . 'schema\migrations',
-  'migration_schema' => APPPATH . 'schema\current_schema.yml',
+  'migration_classes' => APPPATH . 'schema/migrations',
+  'migration_schema' => APPPATH . 'schema/current_schema.yml',
   'builderOptions' => array(
       'baseClassPrefix'=>'Base_',
       'baseClassesDirectory'=>'',
