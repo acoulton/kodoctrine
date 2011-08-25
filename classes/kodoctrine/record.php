@@ -163,6 +163,15 @@ abstract class KoDoctrine_Record extends Doctrine_Record {
 
     public function get_validation($data) {
 
+        // Remap Doctrine_Null values to allow use with Kohana validation
+        foreach ($data as $key=>$value)
+        {
+            if ($value instanceof Doctrine_Null)
+            {
+                $data[$key] = null;
+            }
+        }
+
         $validation = Validation::factory($data);
         $validation->bind(':model', $this);
 
