@@ -104,8 +104,8 @@ class KoDoctrine_Template_Listener_Encryptable extends Doctrine_Record_Listener
         //@FUTURE: Implement a method to transparently remove and replace the validation rules for these fields and run them here
         //run the preValidators
         $preValidation = Arr::get($options,'preValidate');
-        if ($preValidation) {
-            $validator = new Validate(array($clearField=>$record->$clearField));
+        if ($preValidation) {			
+            $validator = new Validation(array($clearField=>$record->$clearField));
             $validator->rules($clearField, Arr::get($preValidation,'rules',array()));
             if ( ! $validator->check()) {
 
