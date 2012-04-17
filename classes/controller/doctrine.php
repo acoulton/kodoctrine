@@ -111,6 +111,9 @@ class Controller_Doctrine extends Controller {
      * This action migrates the database to current version. Note that it does not
      * carry out any authentication or confirmation, nor does it backup the DB.
      * These are all left as actions for future implementation.
+	 *
+	 * THIS METHOD IS DEPRECATED - use minion kodoctrine:migrate
+	 * @deprecated
      */
     public function action_migrate() {
         //@todo: Backup before beginning!
