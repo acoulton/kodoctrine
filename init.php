@@ -4,7 +4,7 @@ require Kohana::find_file('vendor', 'doctrine1.2/lib/doctrine');
 spl_autoload_register(array('Doctrine', 'autoload'));
 
 // Get configurations for doctrine
-$Config = Kohana::config('doctrine');
+$Config = Kohana::$config->load('doctrine');
 
 // initializing manager
 $manager = Doctrine_Manager::getInstance();
