@@ -76,7 +76,7 @@ class KoDoctrine_Migration_Diff extends Doctrine_Migration_Diff
 
     protected function _buildModelInformation(array $models)
     {
-        $files = Arr::flatten(Kohana::list_files('classes/model'));
+        $files = Arr::flatten(Kohana::list_files('classes/Model'));
         ksort($files);
         //print_r(Kohana::debug($files));
         foreach ($files as $file)

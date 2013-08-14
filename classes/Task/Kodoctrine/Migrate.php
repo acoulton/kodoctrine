@@ -10,7 +10,7 @@
  * @copyright  (c) 2012 Andrew Coulton
  * @license    http://kohanaframework.org/license
  */
-class Minion_Task_KoDoctrine_Migrate extends Minion_Task
+class Task_Kodoctrine_Migrate extends Minion_Task
 {
 	/**
 	 * Reconnects as an account with privileges to carry out the migration
@@ -25,7 +25,7 @@ class Minion_Task_KoDoctrine_Migrate extends Minion_Task
         $connection->connect();
     }
 
-	public function execute(array $params)
+	public function _execute(array $params)
 	{
 		$config = Kohana::$config->load('doctrine');
 
