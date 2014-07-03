@@ -1,0 +1,28 @@
+{
+    "name":        "acoulton/kodoctrine",
+    "description": "[LEGACY] Integrates Doctrine 1.2 with Kohana 3.0",
+    "homepage":    "https://github.com/acoulton/kodoctrine",
+    "license":     "BSD-3-Clause",
+    "keywords":    ["kohana", "doctrine", "orm"],
+    "authors": [
+        {
+            "name":     "Andrew Coulton",
+            "homepage": "https://github.com/acoulton",
+            "role":     "developer"
+        }
+    ],
+    "support": {
+        "issues":   "https://github.com/acoulton/kodoctrine/issues",
+        "source":   "https://github.com/acoulton/kodoctrine"
+    },
+    "require": {
+        "kohana/core":          "3.0.*",
+        "doctrine/doctrine1":   "1.2.*",
+        "php":                  ">=5.3.3"
+    },
+    "require-dev": {
+    },
+    "config": {
+        "preferred-install" : "dist"
+    }
+}

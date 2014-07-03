@@ -1,8 +1,10 @@
 <?php
 /* Doctrine integration */
-require Kohana::find_file('vendor', 'doctrine1.2/lib/Doctrine');
-spl_autoload_register(array('Doctrine', 'autoload'));
-
+if ( ! class_exists('Doctrine_Manager')) {
+	throw new \Exception(
+		"Could not find Doctrine_Manager - either you didn't install with composer or you haven't included the composer autoloader in your project"
+	);
+}
 // Get configurations for doctrine
 $Config = Kohana::config('doctrine');
 
