@@ -1,6 +1,6 @@
 <?php
 /* Doctrine integration */
-require Kohana::find_file('vendor', 'doctrine1.2/lib/doctrine');
+require Kohana::find_file('vendor', 'doctrine1.2/lib/Doctrine');
 spl_autoload_register(array('Doctrine', 'autoload'));
 
 // Get configurations for doctrine
