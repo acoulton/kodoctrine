@@ -126,7 +126,7 @@ class KoDoctrine_Template_Listener_Encryptable extends Doctrine_Record_Listener
         
         //encrypt the data
         //@todo: Provide a configuration option for the key files somewhere
-        $fp = fopen(APPPATH."keys\public_key.pem",'r');
+        $fp = fopen(APPPATH."keys/public_key.pem",'r');
         $pub_key = fread($fp,8192);
         fclose($fp);
         openssl_public_encrypt($record->$clearField, $cipherText, $pub_key);
