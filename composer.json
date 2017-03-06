@@ -16,7 +16,7 @@
         "source":   "https://github.com/acoulton/kodoctrine"
     },
     "require": {
-        "kohana/core":          "3.3.*",
+        "kohana/core":          "3.2.*",
         "doctrine/doctrine1":   "1.2.*",
         "php":                  ">=5.3.3"
     },
