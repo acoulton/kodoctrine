@@ -3,6 +3,7 @@
     "description": "[LEGACY] Integrates Doctrine 1.2 with Kohana 3.3",
     "homepage":    "https://github.com/acoulton/kodoctrine",
     "license":     "BSD-3-Clause",
+    "abandoned": true,
     "keywords":    ["kohana", "doctrine", "orm"],
     "authors": [
         {
